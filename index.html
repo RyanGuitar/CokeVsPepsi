@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport"
+    content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
+  <title>Coke Vs Pepsi</title>
+  <style>
+    * {
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    body,
+    html {
+      background-color: rgba(50, 50, 50, 50);
+      width: 100vw;
+      height: 300vh;
+    }
+
+    #progress {
+      z-index: 10;
+      height: 100px;
+      width: 100px;
+      border-radius: 50%;
+      position: fixed;
+      bottom: 5%;
+      left: 5%;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      display: grid;
+      place-items: center;
+    }
+
+    #progress-value {
+      z-index: 10;
+      display: block;
+      height: calc(100% - 20px);
+      width: calc(100% - 20px);
+      background-color: white;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-weight: 600;
+      font-size: 20px;
+    }
+
+    #container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    #canvas,
+    #background {
+      overflow: hidden;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100vw;
+      height: auto;
+      aspect-ratio: 1/1;
+    }
+
+    h1 {
+      position: absolute;
+      top: 10%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-shadow: 7px 7px 7px white;
+      color: #008fff;
+      font-size: 6vw;
+      text-align: center;
+      padding: 30px 0;
+    }
+
+    h2 {
+      position: absolute;
+      top: 15%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: red;
+      font-size: 3vw;
+    }
+
+    #coke {
+      position: absolute;
+      top: 50%;
+      left: 0%;
+      transform: translate(-50%, -50%);
+      width: 0%;
+      height: auto;
+      aspect-ratio: 1/1;
+    }
+
+    #pepsi {
+      position: absolute;
+      top: 50%;
+      left: 100%;
+      transform: translate(-50%, -50%);
+      width: 0%;
+      height: auto;
+      aspect-ratio: 1/1;
+    }
+
+    @media (orientation: landscape) {
+      h1 {
+        font-size: 6vh;
+      }
+
+      h2 {
+        font-size: 3vh;
+      }
+
+      #canvas,
+      #background {
+        height: 100vh;
+        width: auto;
+        aspect-ratio: 1/1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="container">
+    <div id="canvas">
+      <img src="background.jpeg" alt="war zone" id="background">
+      <img src="pepsi.webp" alt="pepsi" id="pepsi">
+      <img src="coke.webp" alt="coke" id="coke">
+      <div id="progress">
+        <span id="progress-value"></span>
+      </div>
+      <h1>Coke Vs Pepsi</h1>
+      <h2>The Soda Can Wars</h2>
+    </div>
+  </div>
+
+  <script>
+    const doc = document.documentElement
+    let scrollValue = 0
+    const Coke = getId('coke').style
+    const Pepsi = getId('pepsi').style
+
+    function getId(id) {
+      return document.getElementById(id);
+    }
+
+    function animateCoke() {
+      if (scrollValue < 55) {
+        Coke.width = scrollValue * 5 + 'px'
+        Coke.left = scrollValue + '%'
+        Coke.top = scrollValue + '%'
+      }
+    }
+
+    function animatePepsi() {
+      if (scrollValue < 45) {
+        Pepsi.width = scrollValue * 4 + 'px'
+        Pepsi.left = (100 - scrollValue) + '%'
+      } else {
+        Pepsi.left = scrollValue * 1.5 + '%'
+        Pepsi.width = scrollValue * 5 + 'px'
+      }
+    }
+
+    function showProgress() {
+      const scrollProgress = getId("progress");
+      const progressValue = getId("progress-value");
+      scrollProgress.style.background = `conic-gradient(red ${scrollValue}%, blue ${scrollValue}%)`;
+      progressValue.textContent = `${scrollValue}%`;
+      animateCoke()
+      animatePepsi()
+    }
+
+    function getScrollValue() {
+      let pos = doc.scrollTop;
+      let calcHeight = doc.scrollHeight - doc.clientHeight;
+      scrollValue = Math.round(pos * 100 / calcHeight);
+      showProgress()
+    }
+
+    let throttleTimer;
+
+    function throttle(callback, time) {
+      if (throttleTimer) return;
+      throttleTimer = true;
+      setTimeout(() => {
+
+        callback();
+        throttleTimer = false;
+      }, time);
+    }
+
+    window.addEventListener("scroll", (e) => {
+      throttle(getScrollValue, 1000 / 60);
+    });
+
+    showProgress()
+  </script>
+</body>
+
+</html>
